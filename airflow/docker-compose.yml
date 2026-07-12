@@ -1,1 +1,101 @@
-# Placeholder — built in a later phase (see CLAUDE.md build order)
+# Local Airflow for the Transit Pulse ELT pipeline (slim, single-machine).
+# Based on the official Apache Airflow Compose, trimmed to LocalExecutor.
+#
+# Setup:
+#   1. Place your GCP service-account key at ./secrets/gcp-key.json
+#   2. Copy ../.env values into a local .env next to this file (see keys below)
+#   3. mkdir -p logs plugins && echo -e "AIRFLOW_UID=$(id -u)" >> .env
+#   4. docker compose up airflow-init   (first run only)
+#   5. docker compose up
+#   Web UI: http://localhost:8080  (login airflow / airflow)
+---
+x-airflow-common: &airflow-common
+  image: apache/airflow:2.9.3-python3.11
+  environment: &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+    PYTHONPATH: /opt/transit_pulse
+    # Passed through to ingestion / dbt / GE (define these in .env)
+    GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+    BQ_DATASET_RAW: ${BQ_DATASET_RAW:-raw}
+    BQ_DATASET_STAGING: ${BQ_DATASET_STAGING:-staging}
+    BQ_DATASET_MARTS: ${BQ_DATASET_MARTS:-marts}
+    BQ_LOCATION: ${BQ_LOCATION:-US}
+    MTA_APP_TOKEN: ${MTA_APP_TOKEN:-}
+    GOOGLE_APPLICATION_CREDENTIALS: /opt/secrets/gcp-key.json
+    # Install project deps into the Airflow image at container start.
+    _PIP_ADDITIONAL_REQUIREMENTS: >-
+      google-cloud-bigquery pandas requests python-dotenv
+      dbt-bigquery great-expectations db-dtypes
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./logs:/opt/airflow/logs
+    - ./plugins:/opt/airflow/plugins
+    - ../ingestion:/opt/transit_pulse/ingestion
+    - ../data_quality:/opt/transit_pulse/data_quality
+    - ../dbt_transit:/opt/transit_pulse/dbt_transit
+    - ./secrets:/opt/secrets:ro
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on: &airflow-common-depends-on
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+    restart: always
+
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-init:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate
+        airflow users create \
+          --username airflow --password airflow \
+          --firstname Air --lastname Flow --role Admin \
+          --email admin@example.com || true
+    environment:
+      <<: *airflow-common-env
+      _AIRFLOW_DB_MIGRATE: "true"
+
+volumes:
+  postgres-db-volume:

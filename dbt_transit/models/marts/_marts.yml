@@ -8,8 +8,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_trains_delayed')
-              field: line_name
+              arguments:
+                to: ref('stg_trains_delayed')
+                field: line_name
       - name: period
         tests:
           - not_null
@@ -18,7 +19,8 @@ models:
           - not_null
     tests:
       - unique:
-          column_name: "concat(line_name, '|', cast(period as string))"
+          arguments:
+            column_name: "concat(line_name, '|', cast(period as string))"
 
   - name: mart_station_performance
     description: "Per-station map feed: coords, primary-line OTP, reliability tier, ridership."
@@ -36,7 +38,8 @@ models:
       - name: reliability_tier
         tests:
           - accepted_values:
-              values: ['reliable', 'at_risk', 'poor', 'unknown']
+              arguments:
+                values: ['reliable', 'at_risk', 'poor', 'unknown']
 
   - name: mart_time_trends
     description: "Per line/month weekday-vs-weekend OTP, peak-vs-offpeak CJT, rolling OTP."
@@ -49,7 +52,8 @@ models:
           - not_null
     tests:
       - unique:
-          column_name: "concat(line_name, '|', cast(period as string))"
+          arguments:
+            column_name: "concat(line_name, '|', cast(period as string))"
 
   - name: mart_line_reliability
     description: "Composite line-health score blending OTP, wait assessment, CJT."
@@ -58,8 +62,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('stg_terminal_otp')
-              field: line_name
+              arguments:
+                to: ref('stg_terminal_otp')
+                field: line_name
       - name: period
         tests:
           - not_null
@@ -69,7 +74,9 @@ models:
       - name: reliability_tier
         tests:
           - accepted_values:
-              values: ['reliable', 'at_risk', 'poor']
+              arguments:
+                values: ['reliable', 'at_risk', 'poor']
     tests:
       - unique:
-          column_name: "concat(line_name, '|', cast(period as string))"
+          arguments:
+            column_name: "concat(line_name, '|', cast(period as string))"

@@ -11,7 +11,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install -r requirements.txt
-      - run: ruff check ingestion/ dashboard/ scripts/ tests/
+      - run: ruff check ingestion/ dashboard/ scripts/ tests/ data_quality/ airflow/
       - run: pytest tests/ -v
 
   dbt-compile:
@@ -22,11 +22,13 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install dbt-bigquery
-      # Compile-only in CI: no BigQuery credentials needed. Dummy env vars
-      # satisfy profiles.yml so dbt can parse the project.
-      - run: cd dbt_transit && dbt deps && dbt compile
+      # Parse-only in CI: `dbt parse` validates that the project compiles (refs,
+      # sources, macros, Jinja) into a manifest WITHOUT connecting to BigQuery,
+      # so no credentials are needed. Dummy env vars satisfy profiles.yml.
+      - run: cd dbt_transit && dbt parse --profiles-dir .
         env:
           GCP_PROJECT_ID: ci-dummy-project
+          BQ_DATASET_RAW: raw
           BQ_DATASET_STAGING: staging
+          BQ_DATASET_MARTS: marts
           BQ_LOCATION: US
-        if: hashFiles('dbt_transit/dbt_project.yml') != ''

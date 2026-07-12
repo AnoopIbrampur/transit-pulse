@@ -9,7 +9,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['1','2','3','4','5','6','7','A','B','C','D','E','F','FS','G','GS','H','J','JZ','L','M','N','Q','R','S 42nd','S Fkln','S Rock','W']
+              arguments:
+                values: ['1','2','3','4','5','6','7','A','B','C','D','E','F','FS','G','GS','H','J','JZ','L','M','N','Q','R','S 42nd','S Fkln','S Rock','W']
       - name: period
         description: "First day of the reporting month."
         tests:
@@ -20,7 +21,8 @@ models:
           - not_null
     tests:
       - unique:
-          column_name: "concat(line_name, '|', cast(period as string), '|', cast(day_type as string))"
+          arguments:
+            column_name: "concat(line_name, '|', cast(period as string), '|', cast(day_type as string))"
 
   - name: stg_customer_journey
     description: "Cleaned customer journey-focused metrics by line/month/period."
@@ -37,7 +39,8 @@ models:
           - not_null
     tests:
       - unique:
-          column_name: "concat(line_name, '|', cast(period as string), '|', time_period)"
+          arguments:
+            column_name: "concat(line_name, '|', cast(period as string), '|', time_period)"
 
   - name: stg_trains_delayed
     description: "Cleaned trains-delayed counts by line/month/day_type/cause."
@@ -73,7 +76,8 @@ models:
           - not_null
     tests:
       - unique:
-          column_name: "concat(car_class, '|', cast(period as string))"
+          arguments:
+            column_name: "concat(car_class, '|', cast(period as string))"
 
   - name: stg_stations
     description: "Station dimension with normalized borough and primary route."
@@ -101,4 +105,5 @@ models:
           - not_null
     tests:
       - unique:
-          column_name: "concat(station_complex_id, '|', cast(period as string))"
+          arguments:
+            column_name: "concat(station_complex_id, '|', cast(period as string))"
