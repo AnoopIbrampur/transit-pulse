@@ -1,0 +1,61 @@
+{
+  "expectation_suite_name": "wait_assessment_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "line"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "wait_assessment"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "wait_assessment",
+        "min_value": 0,
+        "max_value": 1
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "line",
+        "value_set": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "FS",
+          "G",
+          "GS",
+          "H",
+          "J",
+          "JZ",
+          "L",
+          "M",
+          "N",
+          "Q",
+          "R",
+          "S 42nd",
+          "S Fkln",
+          "S Rock",
+          "W"
+        ]
+      }
+    }
+  ]
+}
