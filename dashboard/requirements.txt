@@ -1,1 +1,8 @@
-# Placeholder — built in a later phase (see CLAUDE.md build order)
+streamlit>=1.38
+folium>=0.17
+streamlit-folium>=0.22
+plotly>=5.23
+pandas>=2.0
+google-cloud-bigquery>=3.25
+db-dtypes>=1.2
+python-dotenv>=1.0

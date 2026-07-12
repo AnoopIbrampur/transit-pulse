@@ -1,0 +1,9 @@
+[theme]
+primaryColor = "#0039A6"          # MTA blue
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F2F6"
+textColor = "#1a1a1a"
+font = "sans serif"
+
+[server]
+headless = true
