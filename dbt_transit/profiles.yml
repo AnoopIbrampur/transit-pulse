@@ -1,1 +1,17 @@
-# Placeholder — built in a later phase (see CLAUDE.md build order)
+# dbt connection profile. Reads everything from environment variables — no
+# credentials in the file. Auth uses the same service-account key as ingestion
+# (GOOGLE_APPLICATION_CREDENTIALS), via the "oauth" method which picks up
+# Application Default Credentials.
+transit_pulse:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: "{{ env_var('BQ_DATASET_RAW', 'raw') }}"
+      location: "{{ env_var('BQ_LOCATION', 'US') }}"
+      threads: 4
+      priority: interactive
+      job_execution_timeout_seconds: 300
+      job_retries: 2

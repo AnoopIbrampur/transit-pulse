@@ -1,1 +1,104 @@
-# Placeholder — built in a later phase (see CLAUDE.md build order)
+version: 2
+
+models:
+  - name: stg_terminal_otp
+    description: "Cleaned terminal on-time performance by line/month/day_type."
+    columns:
+      - name: line_name
+        description: "MTA subway line/route code."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['1','2','3','4','5','6','7','A','B','C','D','E','F','FS','G','GS','H','J','JZ','L','M','N','Q','R','S 42nd','S Fkln','S Rock','W']
+      - name: period
+        description: "First day of the reporting month."
+        tests:
+          - not_null
+      - name: otp_fraction
+        description: "On-time performance as a 0-1 fraction."
+        tests:
+          - not_null
+    tests:
+      - unique:
+          column_name: "concat(line_name, '|', cast(period as string), '|', cast(day_type as string))"
+
+  - name: stg_customer_journey
+    description: "Cleaned customer journey-focused metrics by line/month/period."
+    columns:
+      - name: line_name
+        tests:
+          - not_null
+      - name: period
+        tests:
+          - not_null
+      - name: cjt_fraction
+        description: "Customer journey time as a 0-1 fraction."
+        tests:
+          - not_null
+    tests:
+      - unique:
+          column_name: "concat(line_name, '|', cast(period as string), '|', time_period)"
+
+  - name: stg_trains_delayed
+    description: "Cleaned trains-delayed counts by line/month/day_type/cause."
+    columns:
+      - name: line_name
+        tests:
+          - not_null
+      - name: period
+        tests:
+          - not_null
+      - name: delays
+        tests:
+          - not_null
+
+  - name: stg_wait_assessment
+    description: "Cleaned wait assessment by line/month/day_type/period."
+    columns:
+      - name: line_name
+        tests:
+          - not_null
+      - name: wait_assessment_fraction
+        tests:
+          - not_null
+
+  - name: stg_mdbf
+    description: "Cleaned mean distance between failures by car class/month."
+    columns:
+      - name: car_class
+        tests:
+          - not_null
+      - name: mdbf
+        tests:
+          - not_null
+    tests:
+      - unique:
+          column_name: "concat(car_class, '|', cast(period as string))"
+
+  - name: stg_stations
+    description: "Station dimension with normalized borough and primary route."
+    columns:
+      - name: gtfs_stop_id
+        description: "GTFS stop identifier — unique per station."
+        tests:
+          - not_null
+          - unique
+      - name: latitude
+        tests:
+          - not_null
+      - name: longitude
+        tests:
+          - not_null
+
+  - name: stg_station_ridership
+    description: "Cleaned monthly ridership by station complex."
+    columns:
+      - name: station_complex_id
+        tests:
+          - not_null
+      - name: ridership
+        tests:
+          - not_null
+    tests:
+      - unique:
+          column_name: "concat(station_complex_id, '|', cast(period as string))"

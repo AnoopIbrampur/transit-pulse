@@ -1,1 +1,75 @@
-# Placeholder — built in a later phase (see CLAUDE.md build order)
+version: 2
+
+models:
+  - name: mart_delay_analysis
+    description: "Delays by line/month with rolling average, MoM change, severity rank."
+    columns:
+      - name: line_name
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_trains_delayed')
+              field: line_name
+      - name: period
+        tests:
+          - not_null
+      - name: total_delays
+        tests:
+          - not_null
+    tests:
+      - unique:
+          column_name: "concat(line_name, '|', cast(period as string))"
+
+  - name: mart_station_performance
+    description: "Per-station map feed: coords, primary-line OTP, reliability tier, ridership."
+    columns:
+      - name: gtfs_stop_id
+        tests:
+          - not_null
+          - unique
+      - name: latitude
+        tests:
+          - not_null
+      - name: longitude
+        tests:
+          - not_null
+      - name: reliability_tier
+        tests:
+          - accepted_values:
+              values: ['reliable', 'at_risk', 'poor', 'unknown']
+
+  - name: mart_time_trends
+    description: "Per line/month weekday-vs-weekend OTP, peak-vs-offpeak CJT, rolling OTP."
+    columns:
+      - name: line_name
+        tests:
+          - not_null
+      - name: period
+        tests:
+          - not_null
+    tests:
+      - unique:
+          column_name: "concat(line_name, '|', cast(period as string))"
+
+  - name: mart_line_reliability
+    description: "Composite line-health score blending OTP, wait assessment, CJT."
+    columns:
+      - name: line_name
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_terminal_otp')
+              field: line_name
+      - name: period
+        tests:
+          - not_null
+      - name: line_health_score
+        tests:
+          - not_null
+      - name: reliability_tier
+        tests:
+          - accepted_values:
+              values: ['reliable', 'at_risk', 'poor']
+    tests:
+      - unique:
+          column_name: "concat(line_name, '|', cast(period as string))"

@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Raw MTA open-data tables loaded by the ingestion pipeline."
+    database: "{{ env_var('GCP_PROJECT_ID') }}"
+    schema: "{{ env_var('BQ_DATASET_RAW', 'raw') }}"
+    tables:
+      - name: terminal_otp
+        description: "Terminal on-time performance by line/month/day_type (2015+)."
+      - name: customer_journey
+        description: "Customer journey-focused metrics by line/month/period (2015+)."
+      - name: trains_delayed
+        description: "Trains delayed by line/month/day_type/cause category (2020+)."
+      - name: wait_assessment
+        description: "Wait assessment (headway regularity) by line/month (2015+)."
+      - name: mdbf
+        description: "Mean distance between failures by car class/month (2015+)."
+      - name: stations
+        description: "Subway station dimension: name, borough, routes, lat/long."
+      - name: station_ridership
+        description: "Monthly ridership by station complex (2017+)."
