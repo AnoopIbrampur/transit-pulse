@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Env / credentials
+.env
+*.json.key
+service-account*.json
+gcp-key*.json
+
+# dbt
+dbt_transit/target/
+dbt_transit/dbt_packages/
+dbt_transit/logs/
+logs/
+
+# Airflow
+airflow/logs/
+airflow/plugins/
+airflow/*.pid
+airflow/airflow.db
+
+# Great Expectations
+great_expectations/uncommitted/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

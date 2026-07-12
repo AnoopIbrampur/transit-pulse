@@ -1,0 +1,32 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install -r requirements.txt
+      - run: ruff check ingestion/ dashboard/ scripts/ tests/
+      - run: pytest tests/ -v
+
+  dbt-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install dbt-bigquery
+      # Compile-only in CI: no BigQuery credentials needed. Dummy env vars
+      # satisfy profiles.yml so dbt can parse the project.
+      - run: cd dbt_transit && dbt deps && dbt compile
+        env:
+          GCP_PROJECT_ID: ci-dummy-project
+          BQ_DATASET_STAGING: staging
+          BQ_LOCATION: US
+        if: hashFiles('dbt_transit/dbt_project.yml') != ''
