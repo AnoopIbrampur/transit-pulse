@@ -6,40 +6,28 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
+import theme
 from data import available_lines, load_delay_causes
 
-st.set_page_config(page_title="Delay Causes — Transit Pulse", page_icon="🧯", layout="wide")
-
-# Consistent color per cause across the page.
-CAUSE_COLORS = {
-    "Infrastructure & Equipment": "#e74c3c",
-    "Police & Medical": "#8e44ad",
-    "Planned ROW Work": "#e67e22",
-    "Crew Availability": "#2980b9",
-    "Operating Conditions": "#16a085",
-    "External Factors": "#7f8c8d",
-}
+theme.setup("Delay Causes")
 
 
 def main() -> None:
     """Render the delay-causes page."""
-    st.title("🧯 Delay Root Causes")
-    st.markdown(
-        "The MTA tags every delay with a cause. This is the part of the data that "
-        "explains *why* the network runs late, and the mix has changed over time. "
-        "Delay-cause data starts in 2020."
-    )
-
     data = load_delay_causes()
     lines = st.session_state.get("selected_lines") or available_lines()
     data = data[data["line_name"].isin(lines)] if lines else data
     if data.empty:
+        theme.sign("Delay root causes")
         st.warning("No data for the current filters.")
         return
 
     data["period"] = pd.to_datetime(data["period"])
+    theme.sign(
+        "Delay root causes",
+        sub="Every delay carries an MTA cause tag · data begins in 2020",
+    )
 
-    # Systemwide totals by cause over the whole window.
     totals = (
         data.groupby("reporting_category", as_index=False)["delays"].sum()
         .sort_values("delays", ascending=True)
@@ -49,17 +37,22 @@ def main() -> None:
 
     c1, c2, c3 = st.columns(3)
     c1.metric("Total delays (2020+)", f"{total_delays:,}")
-    c2.metric("Biggest cause", top_cause["reporting_category"],
+    short_name = top_cause["reporting_category"].replace(" & Equipment", "")
+    c2.metric("Biggest cause", short_name,
               f"{top_cause['delays'] / total_delays * 100:.0f}% of all delays")
     c3.metric("Cause categories", f"{data['reporting_category'].nunique()}")
+    st.write("")
 
     st.subheader("Total delays by cause")
     fig_bar = px.bar(
         totals, x="delays", y="reporting_category", orientation="h",
-        color="reporting_category", color_discrete_map=CAUSE_COLORS,
+        color="reporting_category", color_discrete_map=theme.CAUSE_COLORS,
         labels={"delays": "Total delays", "reporting_category": "Cause"},
+        text="delays",
     )
-    fig_bar.update_layout(height=340, showlegend=False, yaxis_title=None)
+    fig_bar.update_traces(texttemplate="%{text:,.0f}", textposition="outside",
+                          marker_line_width=0)
+    fig_bar.update_layout(height=340, showlegend=False, yaxis_title=None, bargap=0.35)
     st.plotly_chart(fig_bar, use_container_width=True)
 
     st.subheader("How the mix of causes has shifted")
@@ -76,10 +69,12 @@ def main() -> None:
     fig_area = px.area(
         monthly.sort_values("period"),
         x="period", y="share", color="reporting_category",
-        color_discrete_map=CAUSE_COLORS,
+        color_discrete_map=theme.CAUSE_COLORS,
+        category_orders={"reporting_category": theme.CAUSE_ORDER},
         labels={"share": "Share of delays (%)", "period": "Month",
                 "reporting_category": "Cause"},
     )
+    fig_area.update_traces(line_width=0.5)
     fig_area.update_layout(height=440, hovermode="x unified", legend_title_text="Cause",
                            yaxis_range=[0, 100])
     st.plotly_chart(fig_area, use_container_width=True)

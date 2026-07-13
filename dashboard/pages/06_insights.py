@@ -7,13 +7,13 @@ does not refit models on load. Regenerate with `python -m analysis.run_all`.
 from __future__ import annotations
 
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+import theme
 from data import load_analysis_output
 
-st.set_page_config(page_title="Insights — Transit Pulse", page_icon="🔬", layout="wide")
+theme.setup("Insights")
 
 
 def render_drivers() -> None:
@@ -25,22 +25,26 @@ def render_drivers() -> None:
     st.subheader("What drives on-time performance")
     st.caption(
         f"Standardized linear regression over {d['n_observations']:,} line-months. "
-        f"R² = {d['r_squared']} (cross-validated {d['cv_r_squared_mean']}), so the three "
+        f"R² = {d['r_squared']} (cross-validated {d['cv_r_squared_mean']}) — the three "
         "operational factors explain about half the variance in on-time performance."
     )
     rows = [
-        {"factor": d["labels"][f], "coef": d["features"][f]["std_coef"],
-         "corr": d["features"][f]["corr_with_otp"]}
+        {"factor": d["labels"][f], "coef": d["features"][f]["std_coef"]}
         for f in d["ranked_drivers"]
-    ]
+    ][::-1]  # weakest at top so the strongest driver sits at the bottom axis
     df = pd.DataFrame(rows)
-    fig = px.bar(
-        df, x="coef", y="factor", orientation="h",
-        color="coef", color_continuous_scale="RdBu", color_continuous_midpoint=0,
-        labels={"coef": "Standardized coefficient (effect on OTP)", "factor": ""},
+    colors = [theme.DIVERGE_POS if c >= 0 else theme.DIVERGE_NEG for c in df["coef"]]
+    fig = go.Figure(go.Bar(
+        x=df["coef"], y=df["factor"], orientation="h",
+        marker_color=colors, marker_line_width=0,
+        text=[f"{c:+.1f}" for c in df["coef"]], textposition="outside",
+    ))
+    fig.update_layout(
+        height=280, bargap=0.4,
+        xaxis_title="Standardized coefficient (effect on OTP)",
+        xaxis_range=[-8, 8],
     )
-    fig.update_layout(height=280, coloraxis_showscale=False)
-    fig.add_vline(x=0, line_color="#888")
+    fig.add_vline(x=0, line_color="#B9B9B2")
     st.plotly_chart(fig, use_container_width=True)
     st.markdown(
         "Wait assessment (even spacing) helps most; **ridership is the second-strongest "
@@ -67,11 +71,18 @@ def render_forecast() -> None:
     )
     ex = pd.DataFrame(f["example_forecast"])
     if not ex.empty:
+        line = f["example_line"]
         fig = go.Figure()
-        fig.add_scatter(x=ex["month"], y=ex["forecast_otp_pct"], mode="lines+markers",
-                        line={"color": "#2980b9"}, name="Forecast")
-        fig.update_layout(height=300, yaxis_title="Forecast OTP (%)",
-                          title=f"6-month forecast — {f['example_line']} line")
+        fig.add_scatter(
+            x=ex["month"], y=ex["forecast_otp_pct"], mode="lines+markers+text",
+            line=dict(color=theme.route_color(line), width=2.4),
+            marker=dict(size=8),
+            text=[f"{v:.0f}" for v in ex["forecast_otp_pct"]],
+            textposition="top center", textfont=dict(size=11, color=theme.INK_SOFT),
+            name="Forecast",
+        )
+        fig.update_layout(height=320, yaxis_title="Forecast OTP (%)",
+                          title=f"Six-month forecast — {line} line", showlegend=False)
         st.plotly_chart(fig, use_container_width=True)
 
 
@@ -96,11 +107,9 @@ def render_anomalies() -> None:
 
 def main() -> None:
     """Render the insights page."""
-    st.title("🔬 Insights")
-    st.markdown(
-        "Modeling on top of the marts: what drives performance, whether it can be "
-        "forecast, and which months were genuinely anomalous. Full write-up in "
-        "`analysis/FINDINGS.md`."
+    theme.sign(
+        "Insights",
+        sub="Modeling on top of the marts — full write-up in analysis/FINDINGS.md",
     )
     render_drivers()
     st.divider()

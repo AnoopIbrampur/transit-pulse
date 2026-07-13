@@ -166,10 +166,5 @@ def filter_by_lines_and_dates(
     return out
 
 
-# Shared color map for reliability tiers, reused across pages and the map.
-TIER_COLORS: dict[str, str] = {
-    "reliable": "#2ecc71",
-    "at_risk": "#f1c40f",
-    "poor": "#e74c3c",
-    "unknown": "#95a5a6",
-}
+# Shared color map for reliability tiers — canonical values live in theme.py.
+from theme import TIER_COLORS  # noqa: E402, F401  (re-export for pages/map)
