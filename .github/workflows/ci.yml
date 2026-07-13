@@ -10,7 +10,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: pip install -r requirements.txt
+      # requirements.txt is the lean dashboard runtime; the full toolchain
+      # (ingestion, dbt, Great Expectations, analysis, ruff, pytest) is in
+      # requirements-dev.txt.
+      - run: pip install -r requirements-dev.txt
       - run: ruff check ingestion/ dashboard/ scripts/ tests/ data_quality/ airflow/ analysis/
       - run: pytest tests/ -v
 
