@@ -69,6 +69,7 @@ ran close to schedule.
 | Great Expectations | Data-quality checks on the raw tables | Declarative expectations that fail the pipeline instead of silently passing bad rows downstream |
 | Airflow | Orchestration | Scheduling, retries, failure alerting, and a dependency graph you can point at in an interview |
 | Streamlit, Plotly, Folium | The dashboard | Quick to build, free to host, and Folium handles the geospatial map |
+| scikit-learn, statsmodels | The analysis layer (regression, forecasting, anomalies) | Standard, interpretable tooling; the models are meant to be explained, not just scored |
 | GitHub Actions | CI | Lint, unit tests, and an offline `dbt parse` on every push |
 
 ## Data source
@@ -137,9 +138,30 @@ docker compose up airflow-init      # first run only
 docker compose up                   # UI at http://localhost:8080, login airflow / airflow
 ```
 
+## Analysis
+
+The pipeline is the plumbing; the analysis is the point. Four studies live in
+[`analysis/`](analysis/) and run with `python -m analysis.run_all`, which refreshes the
+JSON in `analysis/outputs/` that the dashboard reads. The full write-up with numbers and
+caveats is in [`analysis/FINDINGS.md`](analysis/FINDINGS.md). The short version:
+
+- **What drives on-time performance.** A standardized regression over 2,464 line-months
+  explains 47% of the variance (cross-validated). Wait assessment helps most, but
+  ridership is the second-strongest factor and it is *negative*: more riders
+  independently predict worse performance. At the system level, monthly ridership and
+  on-time performance correlate −0.74.
+- **Forecasting.** Holt-Winters beats a seasonal-naive baseline (MAE 2.9 vs 4.1 points,
+  wins on 18 of 23 lines), but monthly OTP is a short, break-heavy series, so a few
+  points of error is the honest ceiling.
+- **Anomaly detection.** A robust z-score with a magnitude gate flags the real events:
+  the 5 line's collapse to 24% on-time in 2017, the 7 line's signal-work shutdowns in
+  2018, and the near-perfect COVID months in the other direction.
+- **Ridership recovery.** The system sits at 78% of 2019 ridership, but the Bronx (65%)
+  trails Queens (81%) by sixteen points. Recovery falls along borough lines.
+
 ## The dashboard
 
-Four pages, all reading from the BigQuery marts with a one-hour cache so nothing hits
+Seven pages, all reading from the BigQuery marts with a one-hour cache so nothing hits
 the warehouse more than it needs to.
 
 | Page | What is on it |
@@ -147,6 +169,9 @@ the warehouse more than it needs to.
 | Line performance | On-time performance ranked worst to best, reliability tiers, and trend lines over time |
 | Station delay map | Every station on a Folium map, colored by its line's reliability and sized by ridership, with per-tier layers and click-through popups |
 | Time trends | An on-time heatmap by line and month, rolling reliability, peak versus off-peak, and a year-over-year view |
+| Delay causes | Total delays by cause and the shifting mix over time (Infrastructure & Equipment is now the biggest, at 29%) |
+| Ridership recovery | Recovery against the 2019 baseline by borough, plus a station-level map graded red-to-blue |
+| Insights | The regression, forecast, and anomaly results from the analysis layer, surfaced as charts |
 
 The station map is the part I spent the most time on. It is the fastest way to see that
 reliability is not evenly distributed across the city.
@@ -186,9 +211,10 @@ re-checks the 0-to-1 bound after transformation. They all pass on every run, and
 
 ```
 transit-pulse/
+├── analysis/         DS layer: drivers, forecast, anomalies, recovery + FINDINGS.md
 ├── ingestion/        SODA to BigQuery loader and the dataset registry
 ├── data_quality/     Great Expectations suites and the runner
-├── dbt_transit/      staging (7 views), marts (4 tables), 44 tests
+├── dbt_transit/      staging (7 views), marts (6 tables), 53 tests
 ├── dashboard/        Streamlit app and the Folium map
 ├── airflow/          the ELT DAG and a LocalExecutor Docker Compose
 ├── scripts/          BigQuery setup

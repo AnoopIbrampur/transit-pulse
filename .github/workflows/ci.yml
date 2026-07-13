@@ -11,7 +11,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install -r requirements.txt
-      - run: ruff check ingestion/ dashboard/ scripts/ tests/ data_quality/ airflow/
+      - run: ruff check ingestion/ dashboard/ scripts/ tests/ data_quality/ airflow/ analysis/
       - run: pytest tests/ -v
 
   dbt-compile:
