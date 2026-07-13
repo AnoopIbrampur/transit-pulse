@@ -100,6 +100,37 @@ def load_station_performance() -> pd.DataFrame:
     return run_query(f"SELECT * FROM {_marts('mart_station_performance')}")
 
 
+@st.cache_data(ttl=3600)
+def load_delay_causes() -> pd.DataFrame:
+    """Load the delay root-cause mart, oldest→newest."""
+    return run_query(f"SELECT * FROM {_marts('mart_delay_causes')} ORDER BY period")
+
+
+@st.cache_data(ttl=3600)
+def load_ridership_recovery() -> pd.DataFrame:
+    """Load the ridership-recovery-by-station mart."""
+    return run_query(f"SELECT * FROM {_marts('mart_ridership_recovery')}")
+
+
+@st.cache_data(ttl=3600)
+def load_analysis_output(name: str) -> dict:
+    """Load a precomputed analysis result JSON from analysis/outputs.
+
+    Args:
+        name: File stem (e.g. "drivers", "forecast", "anomalies", "recovery").
+
+    Returns:
+        The parsed JSON as a dict, or {} if the file is missing.
+    """
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parents[1] / "analysis" / "outputs" / f"{name}.json"
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text())
+
+
 def available_lines() -> list[str]:
     """Return the sorted list of line names present in the reliability mart."""
     frame = load_line_reliability()

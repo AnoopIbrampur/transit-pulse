@@ -124,6 +124,10 @@ def main() -> None:
     a.markdown("#### 📊 Line Performance\nOTP rankings and trends by line.")
     b.markdown("#### 🗺️ Station Delay Map\nGeospatial reliability across the network.")
     c.markdown("#### 📈 Time Trends\nSeasonality, peak vs off-peak, year-over-year.")
+    d, e, f = st.columns(3)
+    d.markdown("#### 🧯 Delay Causes\nWhat makes trains late, and how the mix shifted.")
+    e.markdown("#### 📉 Ridership Recovery\nPost-pandemic recovery by station and borough.")
+    f.markdown("#### 🔬 Insights\nDriver regression, forecasting, anomaly detection.")
     st.caption("Use the pages in the sidebar to dive in.")
 
 
