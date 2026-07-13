@@ -1,0 +1,42 @@
+{
+  "regime_start": "2021-07-01",
+  "backtest_months": 9,
+  "n_lines": 23,
+  "holt_winters": {
+    "mae": 2.91,
+    "rmse": 3.58
+  },
+  "seasonal_naive": {
+    "mae": 4.09,
+    "rmse": 4.89
+  },
+  "holt_winters_wins": 18,
+  "verdict": "Holt-Winters beats the naive baseline",
+  "example_line": "7",
+  "example_forecast": [
+    {
+      "month": "2026-06",
+      "forecast_otp_pct": 87.9
+    },
+    {
+      "month": "2026-07",
+      "forecast_otp_pct": 90.5
+    },
+    {
+      "month": "2026-08",
+      "forecast_otp_pct": 89.0
+    },
+    {
+      "month": "2026-09",
+      "forecast_otp_pct": 90.8
+    },
+    {
+      "month": "2026-10",
+      "forecast_otp_pct": 89.1
+    },
+    {
+      "month": "2026-11",
+      "forecast_otp_pct": 89.4
+    }
+  ]
+}

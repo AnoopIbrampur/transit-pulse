@@ -1,0 +1,208 @@
+{
+  "z_threshold": 3.5,
+  "n_flagged": 103,
+  "n_line_months": 3161,
+  "n_matched_to_events": 6,
+  "top_anomalies": [
+    {
+      "line": "5",
+      "month": "2017-10",
+      "otp_pct": 24.5,
+      "z": -6.7,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2017-11",
+      "otp_pct": 25.2,
+      "z": -6.61,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2017-09",
+      "otp_pct": 26.1,
+      "z": -6.5,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2017-05",
+      "otp_pct": 26.2,
+      "z": -6.49,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "7",
+      "month": "2018-03",
+      "otp_pct": 55.5,
+      "z": -6.38,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "7",
+      "month": "2018-04",
+      "otp_pct": 57.1,
+      "z": -6.08,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "4",
+      "month": "2017-11",
+      "otp_pct": 27.0,
+      "z": -6.05,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "4",
+      "month": "2017-05",
+      "otp_pct": 28.0,
+      "z": -5.94,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2017-04",
+      "otp_pct": 30.9,
+      "z": -5.92,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2017-03",
+      "otp_pct": 31.3,
+      "z": -5.87,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2017-06",
+      "otp_pct": 31.5,
+      "z": -5.84,
+      "direction": "worse than usual",
+      "event": "Summer of Hell: track fire and derailments at Penn/Harlem"
+    },
+    {
+      "line": "5",
+      "month": "2017-02",
+      "otp_pct": 32.2,
+      "z": -5.76,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "4",
+      "month": "2017-04",
+      "otp_pct": 29.9,
+      "z": -5.72,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "4",
+      "month": "2017-06",
+      "otp_pct": 30.1,
+      "z": -5.69,
+      "direction": "worse than usual",
+      "event": "Summer of Hell: track fire and derailments at Penn/Harlem"
+    },
+    {
+      "line": "5",
+      "month": "2017-07",
+      "otp_pct": 33.7,
+      "z": -5.57,
+      "direction": "worse than usual",
+      "event": "Summer of Hell: emergency repair program"
+    },
+    {
+      "line": "4",
+      "month": "2017-01",
+      "otp_pct": 31.5,
+      "z": -5.53,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2017-08",
+      "otp_pct": 34.1,
+      "z": -5.53,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "4",
+      "month": "2017-09",
+      "otp_pct": 32.0,
+      "z": -5.48,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2015-08",
+      "otp_pct": 34.8,
+      "z": -5.45,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2017-01",
+      "otp_pct": 34.9,
+      "z": -5.43,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2016-05",
+      "otp_pct": 34.9,
+      "z": -5.43,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "4",
+      "month": "2016-12",
+      "otp_pct": 32.5,
+      "z": -5.42,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2016-12",
+      "otp_pct": 35.1,
+      "z": -5.41,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "5",
+      "month": "2016-11",
+      "otp_pct": 35.4,
+      "z": -5.38,
+      "direction": "worse than usual",
+      "event": null
+    },
+    {
+      "line": "4",
+      "month": "2017-10",
+      "otp_pct": 32.9,
+      "z": -5.37,
+      "direction": "worse than usual",
+      "event": null
+    }
+  ]
+}

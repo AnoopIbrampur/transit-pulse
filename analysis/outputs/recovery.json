@@ -1,0 +1,69 @@
+{
+  "system_recovery_pct": 77.6,
+  "by_borough": {
+    "Queens": 81.4,
+    "Brooklyn": 79.8,
+    "Manhattan": 77.6,
+    "Bronx": 65.4
+  },
+  "tier_counts": {
+    "lagging": 191,
+    "depressed": 145,
+    "nearly_recovered": 63,
+    "fully_recovered": 25
+  },
+  "strongest": [
+    {
+      "station": "Astoria Blvd (N,W)",
+      "borough": "Queens",
+      "recovery_pct": 334.3
+    },
+    {
+      "station": "Howard Beach-JFK Airport (A)",
+      "borough": "Queens",
+      "recovery_pct": 141.2
+    },
+    {
+      "station": "E 143 St-St Mary's St (6)",
+      "borough": "Bronx",
+      "recovery_pct": 139.9
+    },
+    {
+      "station": "1 Av (L)",
+      "borough": "Manhattan",
+      "recovery_pct": 139.8
+    },
+    {
+      "station": "Bedford Av (L)",
+      "borough": "Brooklyn",
+      "recovery_pct": 129.9
+    }
+  ],
+  "weakest": [
+    {
+      "station": "Fordham Rd (B,D)",
+      "borough": "Bronx",
+      "recovery_pct": 53.2
+    },
+    {
+      "station": "225 St (2,5)",
+      "borough": "Bronx",
+      "recovery_pct": 53.0
+    },
+    {
+      "station": "Baychester Av (5)",
+      "borough": "Bronx",
+      "recovery_pct": 52.2
+    },
+    {
+      "station": "52 St (7)",
+      "borough": "Queens",
+      "recovery_pct": 50.5
+    },
+    {
+      "station": "Aqueduct Racetrack (A)",
+      "borough": "Queens",
+      "recovery_pct": 28.3
+    }
+  ]
+}

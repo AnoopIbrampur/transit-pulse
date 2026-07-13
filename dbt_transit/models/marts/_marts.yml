@@ -80,3 +80,39 @@ models:
       - unique:
           arguments:
             column_name: "concat(line_name, '|', cast(period as string))"
+
+  - name: mart_delay_causes
+    description: "Delays by line/month/category with per-line and systemwide shares."
+    columns:
+      - name: line_name
+        tests:
+          - not_null
+      - name: reporting_category
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Infrastructure & Equipment', 'Police & Medical', 'Planned ROW Work', 'Crew Availability', 'Operating Conditions', 'External Factors']
+      - name: delays
+        tests:
+          - not_null
+    tests:
+      - unique:
+          arguments:
+            column_name: "concat(line_name, '|', cast(period as string), '|', reporting_category)"
+
+  - name: mart_ridership_recovery
+    description: "Per-complex ridership vs 2019 baseline with recovery tier and coords."
+    columns:
+      - name: station_complex_id
+        tests:
+          - not_null
+          - unique
+      - name: recovery_pct
+        tests:
+          - not_null
+      - name: recovery_tier
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['fully_recovered', 'nearly_recovered', 'lagging', 'depressed']

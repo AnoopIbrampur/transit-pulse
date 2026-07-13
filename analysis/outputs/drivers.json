@@ -1,0 +1,33 @@
+{
+  "labels": {
+    "total_passengers": "Ridership (monthly passengers)",
+    "wait_assessment_pct": "Wait assessment (headway regularity)",
+    "avg_fleet_mdbf": "Fleet reliability (MDBF)"
+  },
+  "n_observations": 2464,
+  "r_squared": 0.469,
+  "cv_r_squared_mean": 0.466,
+  "cv_r_squared_std": 0.034,
+  "features": {
+    "total_passengers": {
+      "std_coef": -5.555,
+      "p_value": 0.0,
+      "corr_with_otp": -0.513
+    },
+    "wait_assessment_pct": {
+      "std_coef": 6.696,
+      "p_value": 0.0,
+      "corr_with_otp": 0.536
+    },
+    "avg_fleet_mdbf": {
+      "std_coef": 3.235,
+      "p_value": 0.0,
+      "corr_with_otp": 0.163
+    }
+  },
+  "ranked_drivers": [
+    "wait_assessment_pct",
+    "total_passengers",
+    "avg_fleet_mdbf"
+  ]
+}
